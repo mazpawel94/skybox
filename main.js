@@ -1,6 +1,7 @@
 const mouse = new THREE.Vector2();
 const parentBox = new THREE.Object3D();
 const centerPoint = new THREE.Object3D();
+const boxes = [];
 parentBox.position = (0, 0, 0);
 let activeBox, time = 0;
 

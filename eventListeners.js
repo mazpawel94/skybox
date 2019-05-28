@@ -1,52 +1,38 @@
-
-
 window.addEventListener("mousemove", () => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    // console.log(camera.position.x.toFixed(3));
 });
 
 window.addEventListener("wheel", e => {
-    console.log("skrolujé");
     const sign = Math.sign(e.deltaY);
     updateSphericalCoordinates(activeBox);
-    activeBox.userData.sphericalCoordinates.radius -= sign * 10;
+    activeBox.userData.sphericalCoordinates.radius -= sign * 1;
+    if (activeBox.userData.sphericalCoordinates.radius <= 5)
+        activeBox.userData.sphericalCoordinates.radius = 5;
     activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
 });
 
 document.addEventListener("keydown", e => {
     if (e.keyCode == 38) {
-        // parentBox.rotation.z += 0.03 * Math.PI / 2;
         updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.phi -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        activeBox.rotation.x -= Math.PI / 256;
-
-        console.log(activeBox.position);
     }
     if (e.keyCode == 40) {
         updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.phi += Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        activeBox.rotation.x += Math.PI / 256;
-        console.log(activeBox.position);
     }
     if (e.keyCode == 37) {
         updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.theta += Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        activeBox.rotation.y += Math.PI / 256;
-
-        console.log(activeBox.position);
     }
     if (e.keyCode == 39) {
         updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.theta -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        activeBox.rotation.y -= Math.PI / 256;
-        console.log(activeBox.position);
     }
-    // renderer.render(scene, camera);
 });
 
 window.addEventListener("resize", () => {
@@ -57,8 +43,6 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("dblclick", e => {
-    // scene.rotation.x = 20;
-    // camera.rotation.x = 20;
     createBox(
         intersects[0].point.x,
         intersects[0].point.y,
@@ -66,5 +50,11 @@ document.addEventListener("dblclick", e => {
     );
 });
 
-// scope.domElement.addEventListener('wheel', onMouseWheel, false);
-// scope.domElement.removeEventListener('wheel', onMouseWheel, false);
+document.addEventListener("click", () => {
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(boxes);
+    if (!intersects.length) return;
+    setActiveBox(intersects[0].object);
+    renderer.render(scene, camera);
+    console.log(intersects[0].object.material.color);
+})
