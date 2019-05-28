@@ -43,6 +43,7 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("dblclick", e => {
+    if (e.target.nodeName === "INPUT") return;
     createBox(
         intersects[0].point.x,
         intersects[0].point.y,
@@ -50,7 +51,8 @@ document.addEventListener("dblclick", e => {
     );
 });
 
-document.addEventListener("click", () => {
+document.addEventListener("click", e => {
+    if (e.target.nodeName === "INPUT") return;
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(boxes);
     if (!intersects.length) return;

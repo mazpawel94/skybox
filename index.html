@@ -11,18 +11,47 @@
         padding: 0;
         height: 100vh;
       }
-
+      form {
+        position: absolute;
+        padding: 20px;
+        top: 20px;
+        left: 50vh;
+        transform: translateX(50%);
+        background-color: #fff;
+        opacity: 0.7;
+        width: 200px;
+        border-radius: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+      }
+      label {
+        width: 60%;
+      }
+      input {
+        width: 30px;
+      }
       canvas {
         display: block;
       }
     </style>
   </head>
   <body>
+    <form>
+      <h2>Parametry nowego prostopadłościanu:</h2>
+      <label for="length">długość:</label>
+      <input type="number" name="length" id="length" value="2" min="1" />
+      <label for="width">szerokość:</label>
+      <input type="number" name="width" id="width" value="2" min="1" />
+      <label for="height">wysokość:</label>
+      <input type="number" name="height" id="height" value="2" min="1" />
+    </form>
     <script src="three.js"></script>
     <script src="OrbitControls.js"></script>
     <script src="TransformControls.js"></script>
     <script src="createElements.js"></script>
-    <script src="eventListeners.js"></script>
     <script src="main.js"></script>
+    <script src="eventListeners.js"></script>
   </body>
 </html>

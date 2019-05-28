@@ -48,7 +48,7 @@ const createControlForBox = box => {
 };
 
 const createBox = (x, y, z) => {
-    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const geometry = new THREE.BoxGeometry(boxLength.value, boxWidth.value, boxHeight.value);
     const material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
     const cube = new THREE.Mesh(geometry, material);
     cube.userData.sphereCoordinates = new THREE.Vector3(x, y, z);
