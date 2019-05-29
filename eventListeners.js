@@ -3,16 +3,50 @@ window.addEventListener("mousemove", () => {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
+const convertXYZToXY = coordinates => {
+    const point = coordinates.normalize();
+    const u = 0.5 + (Math.atan2(point.z, point.x)) / (2 * Math.PI);
+    const v = 0.5 - Math.asin(point.y) / Math.PI;
+    return ({
+        pixelX: Math.round(u * 10012),
+        pixelY: Math.round(v * 4303)
+    })
+}
+
+const checkMaximumDeep = box => {
+    const sphericalCoordinates = box.userData.sphericalCoordinates;
+    sphericalCoordinates.radius = 255;
+    const cube = new THREE.Mesh();
+    cube.position.setFromSpherical(sphericalCoordinates);
+    const XY = convertXYZToXY(cube.position);
+    const deep = getPixel(XY.pixelX, XY.pixelY);
+    return deep === 0 ? 255 : deep;
+}
+
 window.addEventListener("wheel", e => {
     const sign = Math.sign(e.deltaY);
+    let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
     updateSphericalCoordinates(activeBox);
-    activeBox.userData.sphericalCoordinates.radius -= sign * 1;
-    if (activeBox.userData.sphericalCoordinates.radius <= 5)
+    const deep = checkMaximumDeep(activeBox);
+    console.log(deep, radius);
+    if (radius <= deep || sign === 1)
+        radius -= sign * 1;
+    if (radius > deep + 10)
+        activeBox.visible = false;
+    else activeBox.visible = true;
+    if (radius <= 5)
         activeBox.userData.sphericalCoordinates.radius = 5;
+    activeBox.userData.sphericalCoordinates.radius = radius;
     activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
 });
 
 document.addEventListener("keydown", e => {
+    let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
+    updateSphericalCoordinates(activeBox);
+    const deep = checkMaximumDeep(activeBox);
+    if (radius > deep + 10)
+        activeBox.visible = false;
+    else activeBox.visible = true;
     if (e.keyCode == 38) {
         updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.phi -= Math.PI / 256;
@@ -33,6 +67,7 @@ document.addEventListener("keydown", e => {
         activeBox.userData.sphericalCoordinates.theta -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
     }
+    // renderer.render(scene, camera);
 });
 
 window.addEventListener("resize", () => {
@@ -44,15 +79,13 @@ window.addEventListener("resize", () => {
 
 document.addEventListener("dblclick", e => {
     if (e.target.nodeName === "INPUT") return;
+    // const pixelX = Math.round(intersects[0].uv.x * 10012);
+    // const pixelY = Math.round(intersects[0].uv.y * 4303);
     createBox(
         intersects[0].point.x,
         intersects[0].point.y,
         intersects[0].point.z
     );
-    const pixelX = Math.round(intersects[0].uv.x * 10012);
-    const pixelY = Math.round(intersects[0].uv.y * 4303);
-    console.log(10012 - pixelX, 4303 - pixelY);
-    console.log(getPixel(10012 - pixelX, 4303 - pixelY));
 });
 
 document.addEventListener("click", e => {
@@ -63,5 +96,4 @@ document.addEventListener("click", e => {
     if (!intersects.length) return;
     setActiveBox(intersects[0].object);
     renderer.render(scene, camera);
-    console.log(intersects[0].object.material.color);
 })

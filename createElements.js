@@ -35,7 +35,6 @@ const createControlForBox = box => {
         camera,
         renderer.domElement
     );
-    control.addEventListener("mousedown", () => console.log("klik"));
     control.addEventListener("change", () => {
 
         renderer.render(scene, camera)
@@ -54,16 +53,13 @@ const createBox = (x, y, z) => {
     const geometry = new THREE.BoxGeometry(boxLength.value, boxWidth.value, boxHeight.value);
     const material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
     const cube = new THREE.Mesh(geometry, material);
-    cube.userData.sphereCoordinates = new THREE.Vector3(x, y, z);
-    const distance = new THREE.Spherical().setFromCartesianCoords(x, y, z).radius;
-    //przestawienie punktu z glebokosci 255 na 10
-    cube.position.x = x / distance * 10;
-    cube.position.y = y / distance * 10;
-    cube.position.z = z / distance * 10;
+    cube.userData.sphereCoordinates = new THREE.Spherical().setFromCartesianCoords(x, y, z);
+    cube.userData.sphereCoordinates.radius = 10;
+    cube.position.setFromSpherical(cube.userData.sphereCoordinates);
     updateSphericalCoordinates(cube);
     setActiveBox(cube);
     createControlForBox(cube);
-    parentBox.add(cube);
+    scene.add(cube);
     boxes.push(cube);
     renderer.render(scene, camera);
 };
