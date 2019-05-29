@@ -6,15 +6,18 @@ const addLight = () => {
 const createSpace = () => {
     const viewGeometry = new THREE.SphereGeometry(256, 32, 32);
     const viewTexture = new THREE.TextureLoader().load("./panoramaINT.png");
-    //   const texture2 = new THREE.TextureLoader().load("./panoramaDEP.png");
-    //   console.log(texture2);
-
+    const deepTexture = new THREE.TextureLoader().load("./panoramaDEP.png");
     const material = new THREE.MeshLambertMaterial({
         side: THREE.DoubleSide,
         map: viewTexture
     });
+    const material2 = new THREE.MeshLambertMaterial({
+        side: THREE.DoubleSide,
+        map: deepTexture
+    });
     const view = new THREE.Mesh(viewGeometry, material);
     scene.add(view);
+    console.log(material.map);
 };
 
 const setActiveBox = box => {

@@ -49,9 +49,14 @@ document.addEventListener("dblclick", e => {
         intersects[0].point.y,
         intersects[0].point.z
     );
+    const pixelX = Math.round(intersects[0].uv.x * 10012);
+    const pixelY = Math.round(intersects[0].uv.y * 4303);
+    console.log(10012 - pixelX, 4303 - pixelY);
+    console.log(getPixel(10012 - pixelX, 4303 - pixelY));
 });
 
 document.addEventListener("click", e => {
+
     if (e.target.nodeName === "INPUT") return;
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(boxes);
