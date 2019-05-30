@@ -1,13 +1,27 @@
+
+const controlMovement = () => {
+    updateSphericalCoordinates(activeBox);
+    distanceFromObstacle = checkMaximumDeep(activeBox);
+    distanceBoxFromCenter = Math.round(activeBox.userData.sphericalCoordinates.radius);
+    console.log(distanceFromObstacle, distanceBoxFromCenter);
+    if (distanceBoxFromCenter === distanceFromObstacle) {
+        activeBox.position.set(previousPosition.x, previousPosition.y, previousPosition.z);
+        updateSphericalCoordinates(activeBox);
+        return;
+    }
+    if (distanceFromObstacle < distanceBoxFromCenter)
+        activeBox.visible = false;
+    else
+        activeBox.visible = true;
+    previousPosition = new THREE.Vector3().set(activeBox.position.x, activeBox.position.y, activeBox.position.z);
+}
+
+
 window.addEventListener("mousemove", () => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    if (dragActive) {
-        updateSphericalCoordinates(activeBox);
-        if (checkMaximumDeep(activeBox) + 10 < Math.round(activeBox.userData.sphericalCoordinates.radius))
-            activeBox.visible = false;
-        else
-            activeBox.visible = true;
-    }
+    if (dragActive)
+        controlMovement();
 });
 
 const convertXYZToXY = coordinates => {
@@ -30,47 +44,54 @@ const checkMaximumDeep = box => {
 
 window.addEventListener("wheel", e => {
     const sign = Math.sign(e.deltaY);
-    let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    updateSphericalCoordinates(activeBox);
-    const deep = checkMaximumDeep(activeBox);
-    if (radius <= deep || sign === 1)
-        radius -= sign * 1;
-    if (radius > deep + 10)
-        activeBox.visible = false;
-    else activeBox.visible = true;
-    if (radius <= 5)
-        activeBox.userData.sphericalCoordinates.radius = 5;
-    activeBox.userData.sphericalCoordinates.radius = radius;
+    activeBox.userData.sphericalCoordinates.radius -= sign * 1;
     activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+    controlMovement();
+    // let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
+    // updateSphericalCoordinates(activeBox);
+    // const deep = checkMaximumDeep(activeBox);
+    // if (radius <= deep || sign === 1)
+    //     radius -= sign * 1;
+    // if (radius > deep + 10)
+    //     activeBox.visible = false;
+    // else activeBox.visible = true;
+    // if (radius <= 5)
+    //     activeBox.userData.sphericalCoordinates.radius = 5;
+    // activeBox.userData.sphericalCoordinates.radius = radius;
+    // activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
 
 });
 
 document.addEventListener("keydown", e => {
-    let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    updateSphericalCoordinates(activeBox);
-    const deep = checkMaximumDeep(activeBox);
-    if (radius > deep + 10)
-        activeBox.visible = false;
-    else activeBox.visible = true;
+    // let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
+    // updateSphericalCoordinates(activeBox);
+    // const deep = checkMaximumDeep(activeBox);
+    // if (radius > deep + 10)
+    //     activeBox.visible = false;
+    // else activeBox.visible = true;
     if (e.keyCode == 38) {
-        updateSphericalCoordinates(activeBox);
+        // updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.phi -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+        controlMovement();
     }
     if (e.keyCode == 40) {
-        updateSphericalCoordinates(activeBox);
+        // updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.phi += Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+        controlMovement();
     }
     if (e.keyCode == 37) {
-        updateSphericalCoordinates(activeBox);
+        // updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.theta += Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+        controlMovement();
     }
     if (e.keyCode == 39) {
-        updateSphericalCoordinates(activeBox);
+        // updateSphericalCoordinates(activeBox);
         activeBox.userData.sphericalCoordinates.theta -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+        controlMovement();
     }
 });
 

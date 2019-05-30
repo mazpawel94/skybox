@@ -26,7 +26,7 @@ function getPixel(x, y) {
 
 const mouse = new THREE.Vector2();
 const boxes = [];
-let activeBox, dragActive = false;
+let activeBox, dragActive = false, previousPosition;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
