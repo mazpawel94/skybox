@@ -35,21 +35,17 @@
       canvas {
         display: block;
       }
-      img {
-        display: none;
-      }
     </style>
   </head>
   <body>
-    <img width="10012" height="4303" src="./panoramaDEP.png" />
     <form>
       <h2>Parametry nowego prostopadłościanu:</h2>
       <label for="length">długość:</label>
-      <input type="number" name="length" id="length" value="2" min="1" />
+      <input type="number" name="length" id="length" value="2" min="0.01" />
       <label for="width">szerokość:</label>
-      <input type="number" name="width" id="width" value="2" min="1" />
+      <input type="number" name="width" id="width" value="2" min="0.01" />
       <label for="height">wysokość:</label>
-      <input type="number" name="height" id="height" value="2" min="1" />
+      <input type="number" name="height" id="height" value="2" min="0.01" />
     </form>
     <script src="three.js"></script>
     <script src="OrbitControls.js"></script>

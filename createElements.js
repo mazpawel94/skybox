@@ -6,24 +6,19 @@ const addLight = () => {
 const createSpace = () => {
     const viewGeometry = new THREE.SphereGeometry(256, 32, 32);
     const viewTexture = new THREE.TextureLoader().load("./panoramaINT.png");
-    const deepTexture = new THREE.TextureLoader().load("./panoramaDEP.png");
     const material = new THREE.MeshLambertMaterial({
         side: THREE.DoubleSide,
         map: viewTexture
     });
-    const material2 = new THREE.MeshLambertMaterial({
-        side: THREE.DoubleSide,
-        map: deepTexture
-    });
     const view = new THREE.Mesh(viewGeometry, material);
     scene.add(view);
-    console.log(material.map);
 };
 
 const setActiveBox = box => {
     box.material.color.setRGB(0, 1, 0);
-    boxes.forEach(e => e !== box ? e.material.color.setRGB(0, 0, 1) : null);
+    boxes.forEach(e => e !== box ? e.material.color.set(0x444444) : null);
     activeBox = box;
+    activeBoxRadius = box.userData.sphericalCoordinates.radius;
 }
 
 const updateSphericalCoordinates = object => {
@@ -40,22 +35,22 @@ const createControlForBox = box => {
         renderer.render(scene, camera)
     }
     );
-
     control.addEventListener("dragging-changed", function (event) {
+        dragActive = true;
         orbitControls.enabled = !event.value; //zablokowanie rozglądania się wokół
     });
-    // control.showZ = false;
     control.attach(box);
     scene.add(control);
 };
+
 
 const createBox = (x, y, z) => {
     const geometry = new THREE.BoxGeometry(boxLength.value, boxWidth.value, boxHeight.value);
     const material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
     const cube = new THREE.Mesh(geometry, material);
-    cube.userData.sphereCoordinates = new THREE.Spherical().setFromCartesianCoords(x, y, z);
-    cube.userData.sphereCoordinates.radius = 10;
-    cube.position.setFromSpherical(cube.userData.sphereCoordinates);
+    cube.userData.sphericalCoordinates = new THREE.Spherical().setFromCartesianCoords(x, y, z);
+    cube.userData.sphericalCoordinates.radius = 10;
+    cube.position.setFromSpherical(cube.userData.sphericalCoordinates);
     updateSphericalCoordinates(cube);
     setActiveBox(cube);
     createControlForBox(cube);

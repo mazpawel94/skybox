@@ -1,6 +1,13 @@
 window.addEventListener("mousemove", () => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    if (dragActive) {
+        updateSphericalCoordinates(activeBox);
+        if (checkMaximumDeep(activeBox) + 10 < Math.round(activeBox.userData.sphericalCoordinates.radius))
+            activeBox.visible = false;
+        else
+            activeBox.visible = true;
+    }
 });
 
 const convertXYZToXY = coordinates => {
@@ -14,10 +21,8 @@ const convertXYZToXY = coordinates => {
 }
 
 const checkMaximumDeep = box => {
-    const sphericalCoordinates = box.userData.sphericalCoordinates;
-    sphericalCoordinates.radius = 255;
     const cube = new THREE.Mesh();
-    cube.position.setFromSpherical(sphericalCoordinates);
+    cube.position.setFromSpherical({ radius: 255, phi: box.userData.sphericalCoordinates.phi, theta: box.userData.sphericalCoordinates.theta });
     const XY = convertXYZToXY(cube.position);
     const deep = getPixel(XY.pixelX, XY.pixelY);
     return deep === 0 ? 255 : deep;
@@ -28,7 +33,6 @@ window.addEventListener("wheel", e => {
     let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
     updateSphericalCoordinates(activeBox);
     const deep = checkMaximumDeep(activeBox);
-    console.log(deep, radius);
     if (radius <= deep || sign === 1)
         radius -= sign * 1;
     if (radius > deep + 10)
@@ -38,6 +42,7 @@ window.addEventListener("wheel", e => {
         activeBox.userData.sphericalCoordinates.radius = 5;
     activeBox.userData.sphericalCoordinates.radius = radius;
     activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
+
 });
 
 document.addEventListener("keydown", e => {
@@ -67,7 +72,6 @@ document.addEventListener("keydown", e => {
         activeBox.userData.sphericalCoordinates.theta -= Math.PI / 256;
         activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
     }
-    // renderer.render(scene, camera);
 });
 
 window.addEventListener("resize", () => {
@@ -97,3 +101,5 @@ document.addEventListener("click", e => {
     setActiveBox(intersects[0].object);
     renderer.render(scene, camera);
 })
+
+document.addEventListener("mouseup", () => dragActive = false);
