@@ -1,22 +1,25 @@
 
-const controlMovement = () => {
-    updateSphericalCoordinates(activeBox);
-    distanceFromObstacle = checkMaximumDeep(activeBox);
-    distanceBoxFromCenter = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    console.log(distanceFromObstacle, distanceBoxFromCenter);
-    if (distanceBoxFromCenter === distanceFromObstacle) {
-        activeBox.position.set(previousPosition.x, previousPosition.y, previousPosition.z);
-        updateSphericalCoordinates(activeBox);
-        return;
-    }
-    if (distanceFromObstacle < distanceBoxFromCenter)
-        activeBox.visible = false;
-    else
-        activeBox.visible = true;
-    previousPosition = new THREE.Vector3().set(activeBox.position.x, activeBox.position.y, activeBox.position.z);
-}
 
+//create new box
+document.addEventListener("dblclick", e => {
+    if (e.target.nodeName === "INPUT") return;
+    createBox(
+        intersects[0].point.x,
+        intersects[0].point.y,
+        intersects[0].point.z
+    );
+});
 
+//activate box
+document.addEventListener("click", e => {
+    if (e.target.nodeName === "INPUT") return;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(boxes);
+    if (!intersects.length) return;
+    setActiveBox(intersects[0].object);
+})
+
+//move box in cartesian coordinates
 window.addEventListener("mousemove", () => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -24,75 +27,27 @@ window.addEventListener("mousemove", () => {
         controlMovement();
 });
 
-const convertXYZToXY = coordinates => {
-    const point = coordinates.normalize();
-    const u = 0.5 + (Math.atan2(point.z, point.x)) / (2 * Math.PI);
-    const v = 0.5 - Math.asin(point.y) / Math.PI;
-    return ({
-        pixelX: Math.round(u * 10012),
-        pixelY: Math.round(v * 4303)
-    })
-}
+//stop move box in cartesian coordinates
+document.addEventListener("mouseup", () => dragActive = false);
 
-const checkMaximumDeep = box => {
-    const cube = new THREE.Mesh();
-    cube.position.setFromSpherical({ radius: 255, phi: box.userData.sphericalCoordinates.phi, theta: box.userData.sphericalCoordinates.theta });
-    const XY = convertXYZToXY(cube.position);
-    const deep = getPixel(XY.pixelX, XY.pixelY);
-    return deep === 0 ? 255 : deep;
-}
-
+//change of depth box
 window.addEventListener("wheel", e => {
     const sign = Math.sign(e.deltaY);
     activeBox.userData.sphericalCoordinates.radius -= sign * 1;
     activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
     controlMovement();
-    // let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    // updateSphericalCoordinates(activeBox);
-    // const deep = checkMaximumDeep(activeBox);
-    // if (radius <= deep || sign === 1)
-    //     radius -= sign * 1;
-    // if (radius > deep + 10)
-    //     activeBox.visible = false;
-    // else activeBox.visible = true;
-    // if (radius <= 5)
-    //     activeBox.userData.sphericalCoordinates.radius = 5;
-    // activeBox.userData.sphericalCoordinates.radius = radius;
-    // activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-
 });
 
+//move box in spherical coordinates
 document.addEventListener("keydown", e => {
-    // let radius = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    // updateSphericalCoordinates(activeBox);
-    // const deep = checkMaximumDeep(activeBox);
-    // if (radius > deep + 10)
-    //     activeBox.visible = false;
-    // else activeBox.visible = true;
-    if (e.keyCode == 38) {
-        // updateSphericalCoordinates(activeBox);
-        activeBox.userData.sphericalCoordinates.phi -= Math.PI / 256;
-        activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        controlMovement();
-    }
-    if (e.keyCode == 40) {
-        // updateSphericalCoordinates(activeBox);
-        activeBox.userData.sphericalCoordinates.phi += Math.PI / 256;
-        activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        controlMovement();
-    }
-    if (e.keyCode == 37) {
-        // updateSphericalCoordinates(activeBox);
-        activeBox.userData.sphericalCoordinates.theta += Math.PI / 256;
-        activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        controlMovement();
-    }
-    if (e.keyCode == 39) {
-        // updateSphericalCoordinates(activeBox);
-        activeBox.userData.sphericalCoordinates.theta -= Math.PI / 256;
-        activeBox.position.setFromSpherical(activeBox.userData.sphericalCoordinates);
-        controlMovement();
-    }
+    if (e.keyCode == 38)
+        handleKeyDown('phi', -1);
+    if (e.keyCode == 40)
+        handleKeyDown('phi', 1);
+    if (e.keyCode == 37)
+        handleKeyDown('theta', 1);
+    if (e.keyCode == 39)
+        handleKeyDown('theta', -1);
 });
 
 window.addEventListener("resize", () => {
@@ -102,25 +57,4 @@ window.addEventListener("resize", () => {
     renderer.render(scene, camera);
 });
 
-document.addEventListener("dblclick", e => {
-    if (e.target.nodeName === "INPUT") return;
-    // const pixelX = Math.round(intersects[0].uv.x * 10012);
-    // const pixelY = Math.round(intersects[0].uv.y * 4303);
-    createBox(
-        intersects[0].point.x,
-        intersects[0].point.y,
-        intersects[0].point.z
-    );
-});
 
-document.addEventListener("click", e => {
-
-    if (e.target.nodeName === "INPUT") return;
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(boxes);
-    if (!intersects.length) return;
-    setActiveBox(intersects[0].object);
-    renderer.render(scene, camera);
-})
-
-document.addEventListener("mouseup", () => dragActive = false);
