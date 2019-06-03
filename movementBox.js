@@ -2,16 +2,20 @@ const controlMovement = () => {
     updateSphericalCoordinates(activeBox);
     distanceFromObstacle = checkMaximumDeep(activeBox);
     distanceBoxFromCenter = Math.round(activeBox.userData.sphericalCoordinates.radius);
-    if (distanceBoxFromCenter === distanceFromObstacle) {
-        activeBox.position.set(previousPosition.x, previousPosition.y, previousPosition.z);
-        updateSphericalCoordinates(activeBox);
-        return;
-    }
-    if (distanceFromObstacle < distanceBoxFromCenter)
-        activeBox.visible = false;
-    else
-        activeBox.visible = true;
-    previousPosition = new THREE.Vector3().set(activeBox.position.x, activeBox.position.y, activeBox.position.z);
+    activeBox.material.uniforms.depth.value = normalizeDepth(distanceBoxFromCenter);
+    console.log(activeBox.material.uniforms.depth);
+    activeBox.material.needsUpdate = true;
+    renderer.render(activeBox, camera);
+    // if (distanceBoxFromCenter === distanceFromObstacle) {
+    //     activeBox.position.set(previousPosition.x, previousPosition.y, previousPosition.z);
+    //     updateSphericalCoordinates(activeBox);
+    //     return;
+    // }
+    // if (distanceFromObstacle < distanceBoxFromCenter)
+    //     activeBox.visible = false;
+    // else
+    //     activeBox.visible = true;
+    // previousPosition = new THREE.Vector3().set(activeBox.position.x, activeBox.position.y, activeBox.position.z);
 }
 
 const convertXYZToXY = coordinates => {
@@ -39,8 +43,8 @@ const handleKeyDown = (angleName, value) => {
 }
 
 const setActiveBox = box => {
-    box.material.color.setRGB(0, 1, 0);
-    boxes.forEach(e => e !== box ? e.material.color.set(0x444444) : null);
+    box.material.uniforms.color.value = new THREE.Vector4(0.0, 1.0, 0.0, 1.0);
+    boxes.forEach(e => e !== box ? e.material.uniforms.color.value = new THREE.Vector4(0.3, 0.3, 0.3, 1.0) : null);
     activeBox = box;
     activeBoxRadius = box.userData.sphericalCoordinates.radius;
 }

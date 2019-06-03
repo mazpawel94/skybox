@@ -48,6 +48,47 @@
       <input type="number" name="height" id="height" value="2" min="1" />
     </form>
     <script src="three.js"></script>
+    <script src="./three.js-master/examples/js/shaders/ConvolutionShader.js"></script>
+    <script src="./three.js-master/examples/js/WebGL.js"></script>
+    <script type="x-shader/x-vertex" id="vertexShader">
+      varying vec4 col;
+      varying vec4 pos;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+          col = vec4(1.0, 0.0, 0.0, 1.0);
+          pos = vec4(position, 1.0);
+          gl_Position =   projectionMatrix *
+                          modelViewMatrix *
+                          vec4(position,1.0);
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader">
+      uniform sampler2D texture1;
+      varying vec4 col;
+      varying vec4 pos;
+      varying vec2 vUv;
+      void main() {
+        if(pos.x < 0.5) {
+          gl_FragColor = texture2D(texture1, vUv);
+              gl_FragDepthEXT = 0.8;
+
+        }
+        else {
+          gl_FragColor = col;
+          gl_FragDepthEXT = 0.1;
+        }
+
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader2">
+      uniform float depth;
+      uniform vec4 color;
+           void main() {
+                gl_FragColor = color;
+            gl_FragDepthEXT = depth;
+          }
+    </script>
     <script src="OrbitControls.js"></script>
     <script src="TransformControls.js"></script>
     <script src="bitmapaHandler.js"></script>

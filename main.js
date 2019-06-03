@@ -15,11 +15,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = -1;
 
-
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
 const raycaster = new THREE.Raycaster();
 let intersects = raycaster.intersectObjects(scene.children);
 
