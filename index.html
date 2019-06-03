@@ -65,20 +65,18 @@
     </script>
     <script type="x-shader/x-fragment" id="fragmentShader">
       uniform sampler2D texture1;
+      uniform sampler2D texture2;
       varying vec4 col;
       varying vec4 pos;
       varying vec2 vUv;
       void main() {
-        if(pos.x < 0.5) {
-          gl_FragColor = texture2D(texture1, vUv);
-              gl_FragDepthEXT = 0.8;
-
-        }
-        else {
-          gl_FragColor = col;
-          gl_FragDepthEXT = 0.1;
-        }
-
+        vec3 mvPosition = texture2D(texture2, vUv).rgb;
+           gl_FragColor = texture2D(texture2, vUv);
+       // gl_FragColor = vec4(mvPosition, 1.0);
+        if(mvPosition.r <= 0.05)
+          gl_FragDepthEXT = 1.0;
+        else
+         gl_FragDepthEXT = mvPosition.r;
       }
     </script>
     <script type="x-shader/x-fragment" id="fragmentShader2">

@@ -6,7 +6,8 @@ const addLight = () => {
 const createSpace = () => {
     const textureLoader = new THREE.TextureLoader();
     const customUniforms = {
-        texture1: { type: "t", value: textureLoader.load("./panoramaINT.png") }
+        texture1: { type: "t", value: textureLoader.load("./panoramaINT.png") },
+        texture2: { type: "t", value: textureLoader.load("./panoramaDEP.png") }
     };
     const viewGeometry = new THREE.SphereGeometry(255, 32, 32);
     const viewTexture = new THREE.TextureLoader().load("./panoramaINT.png");
