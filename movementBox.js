@@ -3,19 +3,8 @@ const controlMovement = () => {
     distanceFromObstacle = checkMaximumDeep(activeBox);
     distanceBoxFromCenter = Math.round(activeBox.userData.sphericalCoordinates.radius);
     activeBox.material.uniforms.depth.value = normalizeDepth(distanceBoxFromCenter);
-    console.log(activeBox.material.uniforms.depth);
     activeBox.material.needsUpdate = true;
     renderer.render(activeBox, camera);
-    // if (distanceBoxFromCenter === distanceFromObstacle) {
-    //     activeBox.position.set(previousPosition.x, previousPosition.y, previousPosition.z);
-    //     updateSphericalCoordinates(activeBox);
-    //     return;
-    // }
-    // if (distanceFromObstacle < distanceBoxFromCenter)
-    //     activeBox.visible = false;
-    // else
-    //     activeBox.visible = true;
-    // previousPosition = new THREE.Vector3().set(activeBox.position.x, activeBox.position.y, activeBox.position.z);
 }
 
 const convertXYZToXY = coordinates => {

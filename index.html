@@ -51,13 +51,9 @@
     <script src="./three.js-master/examples/js/shaders/ConvolutionShader.js"></script>
     <script src="./three.js-master/examples/js/WebGL.js"></script>
     <script type="x-shader/x-vertex" id="vertexShader">
-      varying vec4 col;
-      varying vec4 pos;
       varying vec2 vUv;
       void main() {
         vUv = uv;
-          col = vec4(1.0, 0.0, 0.0, 1.0);
-          pos = vec4(position, 1.0);
           gl_Position =   projectionMatrix *
                           modelViewMatrix *
                           vec4(position,1.0);
@@ -66,7 +62,6 @@
     <script type="x-shader/x-fragment" id="fragmentShader">
       uniform sampler2D texture1;
       uniform sampler2D texture2;
-      varying vec4 col;
       varying vec4 pos;
       varying vec2 vUv;
       void main() {

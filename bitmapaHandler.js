@@ -3,8 +3,6 @@ const loader = new THREE.ImageLoader();
 loader.load("./panoramaDEP.png", function (image) {
     imagedata = getImageData(image);
     depthData = imagedata.data;
-    console.log(depthData);
-    readDepth();
 });
 
 const getImageData = image => {
@@ -21,13 +19,4 @@ function getPixel(x, y) {
     return depthData[position];
 }
 
-const depthValues = [];
-const readDepth = () => {
-    for (i = 0; i < imagedata.width; i++) {
-        for (j = 0; j < imagedata.height; j++) {
-            depthValues.push(getPixel(i, j));
-        }
-    }
-    console.log(depthValues[20], depthValues[50], depthValues.length);
-}
 
