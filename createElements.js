@@ -39,6 +39,7 @@ const createControlForBox = box => {
 
 const normalizeDepth = depth => {
     const newDepth = Math.abs(depth) / 256;
+    console.log(newDepth);
     return newDepth;
 }
 
